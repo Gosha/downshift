@@ -127,19 +127,104 @@ export interface GetItemPropsOptions<Item> extends Record<string, any> {
   item: Item
 }
 
+export interface GetRootPropsReturn {
+  role: 'combobox'
+  'aria-expanded': boolean
+  'aria-haspopup': 'listbox'
+  'aria-owns': string | null
+  'aria-labelledby': string
+}
+
+type GetToggleButtonCallbacks =
+  | {
+      onMouseMove: (e: React.SyntheticEvent<Element>) => void
+      onMouseDown: (e: React.SyntheticEvent<Element>) => void
+      onBlur: (e: React.SyntheticEvent<Element>) => void
+    }
+  | {
+      onPress: (e: React.SyntheticEvent<Element>) => void // should be react native type
+    }
+  | {}
+export type GetToggleButtonReturn = {
+  type: 'button'
+  role: 'button'
+  'aria-label': 'close menu' | 'open menu'
+  'aria-haspopup': true
+  'data-toggle': true
+} & GetInputPropsCallbacks
+
+export interface GetLabelPropsReturn {
+  htmlFor: string
+  id: string
+}
+export interface GetMenuPropsReturn {
+  role: 'listbox'
+  'aria-labelledby'?: string | undefined
+  id: string
+}
+
+type GetInputPropsCallbacks =
+  | ({
+      onKeyDown: (e: React.SyntheticEvent<Element>) => void
+      onBlur: (e: React.SyntheticEvent<Element>) => void
+    } & (
+      | {
+          onInput: (e: React.SyntheticEvent<Element>) => void
+        }
+      | {
+          onChangeText: (e: React.SyntheticEvent<Element>) => void
+        }
+      | {
+          onChange: (e: React.SyntheticEvent<Element>) => void
+        }))
+  | {}
+export type GetInputPropsReturn = {
+  'aria-autocomplete': 'list'
+  'aria-activedescendant'?: string
+  'aria-controls'?: string
+  'aria-labelledby': string
+  autoComplete: 'off'
+  value: string
+  id: string
+} & GetInputPropsCallbacks
+
+type GetItemPropsCallbacks = {
+  onMouseMove: (e: React.SyntheticEvent<Element>) => void
+  onMouseDown: (e: React.SyntheticEvent<Element>) => void
+} & (
+  | {
+      onPress: (e: React.SyntheticEvent<Element>) => void
+    }
+  | {
+      onClick: (e: React.SyntheticEvent<Element>) => void
+    })
+export type GetItemPropsReturn = {
+  id: string
+  role: 'option'
+  'aria-selected': boolean
+} & GetItemPropsCallbacks
+
 export interface PropGetters<Item> {
-  getRootProps: (
+  getRootProps: <T = {}>(
     options: GetRootPropsOptions,
     otherOptions?: GetPropsCommonOptions,
-  ) => any
-  getToggleButtonProps: (options?: GetToggleButtonPropsOptions) => any
-  getLabelProps: (options?: GetLabelPropsOptions) => any
-  getMenuProps: (
+  ) => GetRootPropsReturn & T
+  getToggleButtonProps: <T = {}>(
+    options?: GetToggleButtonPropsOptions,
+  ) => GetToggleButtonReturn & T
+  getLabelProps: <T = {}>(
+    options?: GetLabelPropsOptions,
+  ) => GetLabelPropsReturn & T
+  getMenuProps: <T = {}>(
     options?: GetMenuPropsOptions,
     otherOptions?: GetPropsCommonOptions,
-  ) => any
-  getInputProps: (options?: GetInputPropsOptions) => any
-  getItemProps: (options: GetItemPropsOptions<Item>) => any
+  ) => GetMenuPropsReturn & T
+  getInputProps: <T = {}>(
+    options?: GetInputPropsOptions,
+  ) => GetInputPropsReturn & T
+  getItemProps: <T = {}>(
+    options: GetItemPropsOptions<Item>,
+  ) => GetItemPropsReturn & T
 }
 
 export interface Actions<Item> {
